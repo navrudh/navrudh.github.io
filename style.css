@@ -633,3 +633,305 @@ body.dark .dark-icon { display: inline-block; }
     gap: 1rem;
   }
 }
+
+/* ==========================================================================
+   Article & Long-form Editorial Styles
+   ========================================================================== */
+
+.article-container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+}
+
+.article-meta-header {
+  margin-bottom: 3.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 2rem;
+}
+
+.article-status-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.pulse-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: #eab308;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); }
+}
+
+.article-headline {
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin: 1.2rem 0 1.25rem;
+}
+
+.article-deck {
+  font-family: var(--font-serif);
+  font-size: 1.32rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin-bottom: 1.75rem;
+}
+
+.article-byline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.article-body h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 3rem 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.article-body h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 2.25rem 0 0.85rem;
+  color: var(--text-primary);
+}
+
+.article-body p {
+  font-size: 1.08rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.article-body blockquote {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  font-style: italic;
+  border-left: 3px solid var(--accent);
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  margin: 2rem 0;
+  color: var(--text-primary);
+  background: var(--accent-soft);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.article-body ul, .article-body ol {
+  margin: 1rem 0 1.75rem 1.75rem;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.article-body li {
+  margin-bottom: 0.5rem;
+}
+
+.article-body code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--tag-bg);
+  color: var(--text-primary);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* Callout Box */
+.callout {
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  margin: 2rem 0;
+  border-left: 4px solid;
+}
+
+.callout-title {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.callout-note {
+  background: var(--bg-secondary);
+  border-left-color: var(--accent);
+}
+.callout-note .callout-title { color: var(--accent); }
+
+.callout-warning {
+  background: rgba(234, 179, 8, 0.08);
+  border-left-color: #eab308;
+}
+.callout-warning .callout-title { color: #ca8a04; }
+
+/* Math Block */
+.math-block {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  text-align: center;
+  margin: 2rem 0;
+  color: var(--text-primary);
+}
+
+/* Architecture SVG */
+.article-figure {
+  margin: 3rem 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.architecture-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.svg-node {
+  stroke-width: 1.5;
+  transition: all 0.2s ease;
+}
+
+.svg-node-upstream {
+  fill: var(--bg-secondary);
+  stroke: var(--accent);
+}
+
+.svg-node-orch {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+}
+
+.svg-node-down {
+  fill: var(--bg-secondary);
+  stroke: var(--border-color);
+}
+
+.svg-title {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  fill: var(--text-primary);
+}
+
+.svg-title-bold {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--accent);
+}
+
+.svg-title-sm {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--text-primary);
+}
+
+.svg-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--text-secondary);
+}
+
+.svg-sub-red {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: #dc2626;
+  font-weight: 600;
+}
+
+.svg-sub-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+.svg-accent {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--text-secondary);
+  font-weight: 500;
+}
+
+.svg-caption {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-style: italic;
+  fill: var(--text-muted);
+}
+
+.svg-line {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.svg-line-dash {
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+/* Comparison Table */
+.comparison-table-wrapper {
+  overflow-x: auto;
+  margin: 2.5rem 0;
+}
+
+.editorial-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.editorial-table th, .editorial-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.editorial-table th {
+  background: var(--bg-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.editorial-table td {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
