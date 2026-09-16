@@ -62,13 +62,117 @@
           <li>Cooperative coroutines yield execution at socket polling boundaries, allowing a single event loop to effortlessly coordinate thousands of in-flight requests.</li>
         </ul>
 
+        <h3 style="font-size: 1.5rem; margin: 2.5rem 0 1rem; color: var(--text-primary);">Empirical Benchmarks: What Actually Happens</h3>
+        <p>
+          I set up a local benchmark lab to test this transition step-by-step against a mock server with 20ms of simulated downstream delay. Each test was run 3 times and averaged:
+        </p>
+
+        <div class="comparison-table-wrapper" style="margin: 1.5rem 0 2rem;">
+          <table class="editorial-table">
+            <thead>
+              <tr>
+                <th>Approach</th>
+                <th>Throughput</th>
+                <th>Client CPU</th>
+                <th>p50 Latency</th>
+                <th>p99 Latency</th>
+                <th>What Happened</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sequential (1 by 1)</strong></td>
+                <td>~45 req/s</td>
+                <td>~5%</td>
+                <td>22 ms</td>
+                <td>28 ms</td>
+                <td>CPU sits idle waiting on network I/O</td>
+              </tr>
+              <tr>
+                <td><strong>ThreadPool (10 workers)</strong></td>
+                <td>~416 req/s</td>
+                <td>~38%</td>
+                <td>23 ms</td>
+                <td>27 ms</td>
+                <td>Clean ~10x linear speedup</td>
+              </tr>
+              <tr>
+                <td><strong>ThreadPool (50 workers)</strong></td>
+                <td>~1,221 req/s</td>
+                <td>~115%</td>
+                <td>28 ms</td>
+                <td>44 ms</td>
+                <td>Works well, but burns a full CPU core</td>
+              </tr>
+              <tr>
+                <td><strong>ThreadPool (100 workers)</strong></td>
+                <td>~1,123 req/s</td>
+                <td>~114%</td>
+                <td>30 ms</td>
+                <td>48 ms</td>
+                <td><span style="color: #dc2626; font-weight: 600;">Hits the wall:</span> throughput drops due to context switching &amp; GIL fights</td>
+              </tr>
+              <tr>
+                <td><strong>AsyncIO (100 coroutines)</strong></td>
+                <td><strong>~1,813 req/s</strong></td>
+                <td><strong>~47%</strong></td>
+                <td>40 ms</td>
+                <td>60 ms</td>
+                <td><span style="color: var(--accent); font-weight: 600;">60% faster than threads using less than half the CPU</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 1.5rem; margin: 2.5rem 0 1rem; color: var(--text-primary);">What Happens to the Server Under Extreme Bursts?</h3>
+        <p>
+          When you switch to async, the client fires so fast that it becomes a firehose. What happens when 500 concurrent coroutines hammer the server with 1,000 requests?
+        </p>
+
+        <div class="comparison-table-wrapper" style="margin: 1.5rem 0 2rem;">
+          <table class="editorial-table">
+            <thead>
+              <tr>
+                <th>Server Setup</th>
+                <th>Throughput</th>
+                <th>Server Drops (429)</th>
+                <th>Success Rate</th>
+                <th>Observations</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Baseline Server</strong><br><small>(50 workers, 200 queue)</small></td>
+                <td>~2,713 req/s</td>
+                <td>53.5% dropped</td>
+                <td>46.5%</td>
+                <td>Buffer filled up instantly; server shed excess load with 429s</td>
+              </tr>
+              <tr>
+                <td><strong>Tuned Server</strong><br><small>(200 workers, 1000 queue)</small></td>
+                <td><strong>~3,483 req/s</strong></td>
+                <td><strong>0% dropped</strong></td>
+                <td><strong>100.0%</strong></td>
+                <td>Absorbed the entire burst smoothly without dropping a single request</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 1.5rem; margin: 2.5rem 0 1rem; color: var(--text-primary);">What I Learned</h3>
+        <ul style="margin: 1rem 0 1.5rem 1.5rem; color: var(--text-secondary);">
+          <li><strong>Thread pools are great until they aren't:</strong> Going from 1 to 50 threads gives an easy 25x boost. But pushing to 100 threads actually made things slower (~1,220 down to ~1,120 req/s) because Python threads spend more time fighting over the GIL and context switching than doing work.</li>
+          <li><strong>AsyncIO is about CPU efficiency:</strong> The async client ran at ~1,800 req/s while only using ~47% CPU. The thread pool burned over 114% CPU to do less work.</li>
+          <li><strong>Downstream servers need breathing room:</strong> Because an async client fires so fast, downstream services need their queue buffers and worker pools properly tuned, or they will shed the spike with 429s.</li>
+        </ul>
+
         <div class="callout callout-note" style="margin-top: 2.5rem;">
           <div class="callout-title">Open Source Reproducible Benchmark Lab</div>
           <p>
-            To empirically validate these scaling characteristics and test admission buffer shedding under simulated downstream backpressure, check out the companion experiment repo:
+            The benchmark runner script, mock server, and multi-run CPU logs are open source:
           </p>
           <p style="margin-top: 0.5rem;">
-            👉 <a href="https://github.com/navrudh/concurrency-bench-lab" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration: underline;">navrudh/concurrency-bench-lab ↗</a>
+            👉 <a href="https://github.com/navrudh/concurrency-bench-lab" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration: underline;">navrudh/concurrency-bench-lab on GitHub ↗</a>
           </p>
         </div>
       </div>
