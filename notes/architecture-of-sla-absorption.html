@@ -10,6 +10,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
+  <!-- KaTeX for crisp mathematical typography -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 </head>
 <body class="light">
   <header class="site-header">
@@ -326,6 +330,30 @@
           <li><strong>Define Service Level Indicators (SLIs) for Downstream Calls:</strong> The orchestrator team publishes public dashboards tracking each dependency's breach rate against their documented contract.</li>
           <li><strong>Reverse Error Budgets:</strong> When a downstream service burns more than their allocated latency budget in a rolling 30-day window, the orchestrator's circuit breakers trip faster, and the operational escalation automatically pages the downstream team's on-call rotation, not the orchestrator's.</li>
         </ul>
+
+        <h3>5. Netflix Fault-Tolerance & Bulkheading (The Hystrix / Resilience4j Legacy)</h3>
+        <p>
+          Netflix pioneered the concept of <strong>isolated execution pools (bulkheading)</strong>. If the Tax service begins tailing out, its dedicated worker thread/semaphore pool saturates immediately. The crucial architectural win: <em>the Billing, Auth, and Provisioning pools remain completely unstarved</em>. The orchestrator degrades only the isolated tax capability (e.g. falling back to an approximate regional estimation table), preserving the macro-workflow's availability.
+        </p>
+
+        <h3>6. Werner Vogels' Dictum: "Everything Fails All The Time"</h3>
+        <p>
+          At Amazon scale, treating downstream failures as exceptional is a fatal design flaw. Vogels' rule necessitates that the orchestrator treat failure as the <strong>standard operating condition</strong>:
+        </p>
+        <ul>
+          <li><strong>Idempotency as a Prerequisite:</strong> No downstream RPC may be executed without a deterministic, client-derived idempotency key. Without idempotency, automatic retries risk double-charging customers or provisioning duplicate cloud tenants.</li>
+          <li><strong>Deterministic Timeouts:</strong> Every downstream call must have an aggressive deadline (e.g. 500ms). If a downstream dependency cannot respond within its contract, it is treated as a deterministic failure, enabling immediate compensation.</li>
+        </ul>
+
+        <h2>7. Annotated References & Canonical Literature</h2>
+        <div class="references-list" style="margin: 2rem 0; font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary);">
+          <p><strong>1. Jeffrey Dean &amp; Luiz André Barroso (Google Research, 2013)</strong> — <a href="https://research.google/pubs/the-tail-at-scale/" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: underline;"><em>The Tail at Scale</em></a> (Communications of the ACM). The definitive paper on why tail latency compounds in multi-tier fanouts and how hedged/speculative requests eliminate outlier delays.</p>
+          <p><strong>2. Martin Fowler (2014)</strong> — <a href="https://martinfowler.com/articles/microservices.html" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: underline;"><em>Microservices: A definition of this new architectural term</em></a>. Canonical treatment of smart endpoints vs. dumb pipes, distributed governance, and design for failure.</p>
+          <p><strong>3. Robert C. Martin (2017)</strong> — <em>Clean Architecture: A Craftsman's Guide to Software Structure and Design</em> (Prentice Hall). Single Responsibility Principle across architectural actor boundaries and the Common Reuse Principle.</p>
+          <p><strong>4. Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (Google, 2016)</strong> — <a href="https://sre.google/sre-book/table-of-contents/" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: underline;"><em>Site Reliability Engineering: How Google Runs Production Systems</em></a> (O'Reilly). In particular, Chapter 3: Embracing Risk &amp; Error Budgets, and Chapter 22: Addressing Cascading Failures.</p>
+          <p><strong>5. Hector Garcia-Molina &amp; Kenneth Salem (Princeton University, 1987)</strong> — <em>Sagas</em> (ACM SIGMOD). The foundational theoretical formulation of long-running, multi-step distributed transactions with compensating steps.</p>
+          <p><strong>6. Michael T. Nygard (2018)</strong> — <em>Release It!: Design and Deploy Production-Ready Software</em> (Pragmatic Bookshelf). Architectural patterns for stability: Circuit Breaker, Bulkheads, Steady State, and Governor.</p>
+        </div>
 
         <h2>Conclusion: Embracing the Absorber's Reality</h2>
         <p>
