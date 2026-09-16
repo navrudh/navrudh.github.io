@@ -61,9 +61,20 @@
           <li>Host CPU utilization dropped as kernel context switching collapsed to near zero.</li>
           <li>Cooperative coroutines yield execution at socket polling boundaries, allowing a single event loop to effortlessly coordinate thousands of in-flight requests.</li>
         </ul>
+
+        <div class="callout callout-note" style="margin-top: 2.5rem;">
+          <div class="callout-title">Open Source Reproducible Benchmark Lab</div>
+          <p>
+            To empirically validate these scaling characteristics and test admission buffer shedding under simulated downstream backpressure, check out the companion experiment repo:
+          </p>
+          <p style="margin-top: 0.5rem;">
+            👉 <a href="https://github.com/navrudh/concurrency-bench-lab" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration: underline;">navrudh/concurrency-bench-lab ↗</a>
+          </p>
+        </div>
       </div>
 
-      <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+      <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="https://github.com/navrudh/concurrency-bench-lab" target="_blank" rel="noopener" class="action-btn primary">View Benchmark Repo on GitHub ↗</a>
         <a href="/#notes" class="action-btn secondary">&larr; Back to all field notes</a>
       </div>
     </article>
